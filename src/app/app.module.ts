@@ -1,8 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+
+import { Ng2GoogleChartsModule } from 'ng2-google-charts';
+
 import { CryptocurrencyComponent } from './cryptocurrency/cryptocurrency.component';
 
 
@@ -12,7 +15,9 @@ import { CryptocurrencyComponent } from './cryptocurrency/cryptocurrency.compone
     CryptocurrencyComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HttpClientModule,
+    Ng2GoogleChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

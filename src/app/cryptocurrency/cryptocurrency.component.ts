@@ -21,20 +21,14 @@ export class CryptocurrencyComponent implements OnInit {
           chartType: "LineChart"
         }
         chart.options = {title: data.symbol};
-        let diff : number = data.prices24h.length - data.prices6h.length;
-        chart.dataTable = [["time", "24h", "6h"]];
+        let analysis = data.analysis;
+        chart.dataTable = [["time", "MA(24)", "MA(6)", "price"]];
         let time = moment().subtract(24, "hours");
-        for(let i=0; i<data.prices24h.length; i++) {
-          if(i < diff) {
-            chart.dataTable.push([time.toDate(), data.prices24h[i], null]);
-          } else {
-            chart.dataTable.push([time.toDate(), data.prices24h[i], data.prices6h[i-diff]]);
-          }
+        for(let i=0; i<analysis.movingAverageSlow.length; i++) {
+          chart.dataTable.push([time.toDate(), analysis.movingAverageSlow[i], analysis.movingAverageFast[i], analysis.prices24[i]]);
           time.add(1, "minutes");
         }
         this.priceChart = chart;
-        console.log(chart);
-        console.log(data);
       },
       error => {
         console.error(error);
@@ -43,7 +37,7 @@ export class CryptocurrencyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCryptoCurrency("CMTBTC");
+    this.getCryptoCurrency("CDTBTC");
   }
 
 }

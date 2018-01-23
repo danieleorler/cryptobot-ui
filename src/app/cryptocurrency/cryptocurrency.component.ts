@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as moment from 'moment';
+import {CryptoCurrency} from './CryptoCurrency';
 
 @Component({
   selector: 'app-cryptocurrency',
@@ -14,18 +15,32 @@ export class CryptocurrencyComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   private getCryptoCurrency(symbol : string) {
-    this.http.get("http://localhost:8080/v1/api/crypto/"+symbol)
+    this.http.get<CryptoCurrency>("http://localhost:8080/v1/api/crypto/"+symbol)
     .subscribe(
       data => {
         let chart = {
-          chartType: "LineChart"
+          chartType: "LineChart",
+          options: {
+            title: data.symbol,
+            height: "500px",
+          },
+          dataTable: [],
+          formatters: [
+            {
+              columns: [1,2,3],
+              type: "NumberFormat",
+              options: {
+                fractionDigits: 8
+              }
+            }
+          ]
         }
-        chart.options = {title: data.symbol};
+        console.log(data);
         let analysis = data.analysis;
-        chart.dataTable = [["time", "MA(24)", "MA(6)", "price"]];
+        chart.dataTable.push(["time", "EMA(24)", "EMA(6)", "price"]);
         let time = moment().subtract(24, "hours");
-        for(let i=0; i<analysis.movingAverageSlow.length; i++) {
-          chart.dataTable.push([time.toDate(), analysis.movingAverageSlow[i], analysis.movingAverageFast[i], analysis.prices24[i]]);
+        for(let i=0; i<analysis.ema24h.length; i++) {
+          chart.dataTable.push([time.toDate(), analysis.ema24h[i], analysis.ema6h[i], analysis.prices24[i]]);
           time.add(1, "minutes");
         }
         this.priceChart = chart;
@@ -37,7 +52,7 @@ export class CryptocurrencyComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getCryptoCurrency("CDTBTC");
+    this.getCryptoCurrency("XRPBTC");
   }
 
 }
